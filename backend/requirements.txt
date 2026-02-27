@@ -1,0 +1,10 @@
+fastapi
+uvicorn[standard]
+python-multipart
+google-genai
+Pillow
+PyMuPDF
+python-dotenv
+pydantic
+pytest
+httpx

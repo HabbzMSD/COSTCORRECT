@@ -1,0 +1,454 @@
+/* ── CostCorrect Design System ──────────────────────────────────────────────
+   Dark-themed, premium aesthetic with glassmorphism and micro-animations.
+   Font: Inter (Google Fonts)
+   ─────────────────────────────────────────────────────────────────────── */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+/* ── Reset & Base ───────────────────────────────────────────────────────── */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg-primary: #0a0a0f;
+  --bg-secondary: #111118;
+  --bg-card: rgba(20, 20, 32, 0.7);
+  --bg-card-hover: rgba(28, 28, 44, 0.8);
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --border-accent: rgba(99, 102, 241, 0.3);
+
+  --text-primary: #f0f0f5;
+  --text-secondary: #9ca3af;
+  --text-muted: #6b7280;
+
+  --accent: #6366f1;
+  --accent-light: #818cf8;
+  --accent-glow: rgba(99, 102, 241, 0.15);
+  --success: #22c55e;
+  --success-glow: rgba(34, 197, 94, 0.15);
+  --warning: #f59e0b;
+  --error: #ef4444;
+
+  --gradient-accent: linear-gradient(135deg, #6366f1, #8b5cf6, #a78bfa);
+  --gradient-bg: radial-gradient(ellipse at 20% 0%, rgba(99, 102, 241, 0.08) 0%, transparent 50%),
+                 radial-gradient(ellipse at 80% 100%, rgba(139, 92, 246, 0.06) 0%, transparent 50%);
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 24px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 48px rgba(0, 0, 0, 0.5);
+  --shadow-glow: 0 0 40px rgba(99, 102, 241, 0.1);
+
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 400ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+html {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+}
+
+/* ── Layout ─────────────────────────────────────────────────────────────── */
+.app-container {
+  min-height: 100vh;
+  background: var(--gradient-bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem 1rem;
+}
+
+.app-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+  animation: fadeInDown 0.6s var(--transition-base);
+}
+
+.app-header h1 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  background: var(--gradient-accent);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 0.5rem;
+}
+
+.app-header p {
+  color: var(--text-secondary);
+  font-size: 1rem;
+  font-weight: 400;
+  max-width: 480px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.main-content {
+  width: 100%;
+  max-width: 900px;
+  animation: fadeInUp 0.6s var(--transition-base);
+}
+
+/* ── Glass Card ─────────────────────────────────────────────────────────── */
+.glass-card {
+  background: var(--bg-card);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl);
+  padding: 2rem;
+  box-shadow: var(--shadow-md);
+  transition: border-color var(--transition-base), box-shadow var(--transition-base);
+}
+
+.glass-card:hover {
+  border-color: var(--border-accent);
+  box-shadow: var(--shadow-md), var(--shadow-glow);
+}
+
+/* ── Upload Zone ────────────────────────────────────────────────────────── */
+.upload-zone {
+  border: 2px dashed rgba(99, 102, 241, 0.25);
+  border-radius: var(--radius-lg);
+  padding: 3rem 2rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  position: relative;
+  overflow: hidden;
+}
+
+.upload-zone::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--accent-glow);
+  opacity: 0;
+  transition: opacity var(--transition-base);
+}
+
+.upload-zone:hover,
+.upload-zone.drag-over {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+}
+
+.upload-zone:hover::before,
+.upload-zone.drag-over::before {
+  opacity: 1;
+}
+
+.upload-icon {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 1rem;
+  border-radius: var(--radius-md);
+  background: var(--accent-glow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+.upload-zone h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+.upload-zone p {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  position: relative;
+  z-index: 1;
+}
+
+.file-selected {
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  background: rgba(99, 102, 241, 0.08);
+  border: 1px solid var(--border-accent);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--accent-light);
+  position: relative;
+  z-index: 1;
+}
+
+.file-selected .file-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.file-selected .file-size {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+
+/* ── Buttons ────────────────────────────────────────────────────────────── */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.875rem 2rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  font-family: inherit;
+  color: #fff;
+  background: var(--gradient-accent);
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.3);
+  width: 100%;
+  margin-top: 1.5rem;
+}
+
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 24px rgba(99, 102, 241, 0.45);
+}
+
+.btn-primary:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ── Loading ────────────────────────────────────────────────────────────── */
+.loading-overlay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 3rem 2rem;
+}
+
+.spinner {
+  width: 48px;
+  height: 48px;
+  border: 3px solid var(--border-subtle);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.loading-text {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  text-align: center;
+}
+
+.loading-text strong {
+  color: var(--text-primary);
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+/* ── BOQ Results Table ──────────────────────────────────────────────────── */
+.boq-results {
+  animation: fadeInUp 0.5s var(--transition-base);
+}
+
+.boq-results .section-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.boq-results .section-subtitle {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  margin-bottom: 1.5rem;
+}
+
+.boq-meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.meta-chip {
+  padding: 0.75rem 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  text-align: center;
+}
+
+.meta-chip .meta-label {
+  display: block;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  margin-bottom: 0.25rem;
+}
+
+.meta-chip .meta-value {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.boq-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-top: 0.5rem;
+}
+
+.boq-table thead th {
+  padding: 0.75rem 1rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  text-align: left;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.boq-table thead th:last-child {
+  text-align: right;
+}
+
+.boq-table tbody td {
+  padding: 1rem;
+  font-size: 0.95rem;
+  border-bottom: 1px solid var(--border-subtle);
+  transition: background var(--transition-fast);
+}
+
+.boq-table tbody tr:hover td {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.boq-table tbody td:last-child {
+  text-align: right;
+  font-weight: 500;
+  color: var(--accent-light);
+}
+
+.boq-table tbody td .item-icon {
+  margin-right: 0.5rem;
+}
+
+.confidence-note {
+  margin-top: 1.25rem;
+  padding: 0.75rem 1rem;
+  background: rgba(245, 158, 11, 0.06);
+  border-left: 3px solid var(--warning);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.confidence-note strong {
+  color: var(--warning);
+}
+
+.btn-reset {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+  padding: 0.625rem 1.5rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  font-family: inherit;
+  color: var(--text-secondary);
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.btn-reset:hover {
+  color: var(--text-primary);
+  border-color: var(--border-accent);
+  background: rgba(99, 102, 241, 0.05);
+}
+
+/* ── Error ──────────────────────────────────────────────────────────────── */
+.error-banner {
+  margin-top: 1rem;
+  padding: 0.875rem 1rem;
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: var(--radius-sm);
+  color: var(--error);
+  font-size: 0.85rem;
+}
+
+/* ── Animations ─────────────────────────────────────────────────────────── */
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Responsive ─────────────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .app-header h1 {
+    font-size: 1.75rem;
+  }
+
+  .glass-card {
+    padding: 1.25rem;
+  }
+
+  .upload-zone {
+    padding: 2rem 1rem;
+  }
+
+  .boq-meta {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .boq-table tbody td,
+  .boq-table thead th {
+    padding: 0.625rem 0.5rem;
+    font-size: 0.85rem;
+  }
+}

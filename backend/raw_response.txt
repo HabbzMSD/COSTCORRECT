@@ -1,0 +1,4 @@
+```json
+{
+  "scale": "1:100",
+  "walls_230mm_linear_m": 34.09,

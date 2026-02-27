@@ -1,0 +1,5 @@
+{
+  "scale": "1:100",
+  "walls_230mm_linear_m": 39.38,
+  "walls_110mm_linear_m": 34.01,
+  "confidence_note": "Scale is explicitly stated as 1

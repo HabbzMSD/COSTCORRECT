@@ -1,0 +1,38 @@
+{
+  "filename": "test.jpeg",
+  "scale": "1:100",
+  "wall_height_m": 2.7,
+  "walls_230mm_linear_m": 105.0,
+  "walls_110mm_linear_m": 45.0,
+  "walls_230mm_area_sqm": 283.5,
+  "walls_110mm_area_sqm": 121.5,
+  "bricks_230mm": 32433,
+  "bricks_110mm": 6950,
+  "total_bricks": 39383,
+  "cement_bags": 303.2,
+  "sand_cubes": 21.66,
+  "wastage_percent": 10.0,
+  "materials": [
+    {
+      "item": "Bricks — 230 mm double skin",
+      "quantity": 32433.0,
+      "unit": "bricks"
+    },
+    {
+      "item": "Bricks — 110 mm single skin",
+      "quantity": 6950.0,
+      "unit": "bricks"
+    },
+    {
+      "item": "Cement (50 kg bags)",
+      "quantity": 303.2,
+      "unit": "bags"
+    },
+    {
+      "item": "Building sand",
+      "quantity": 21.66,
+      "unit": "m³"
+    }
+  ],
+  "confidence_note": "Estimated wall lengths based on visual measurement from the provided plans and the stated scale of 1:100. Includes walls from all three plans (Ground, Wall, and First Storey). Some measurements are approximate due to image quality and line thickness. The wall plan is used to determine the internal walls on the first floor."
+}
