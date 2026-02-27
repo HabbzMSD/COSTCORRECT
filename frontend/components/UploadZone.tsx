@@ -65,46 +65,48 @@ export default function UploadZone({
     };
 
     return (
-        <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, ease: "easeOut" }}
-            id="upload-zone"
-            className={`upload-zone ${dragOver ? "drag-over" : ""}`}
-            onDrop={onDrop}
-            onDragOver={onDragOver}
-            onDragLeave={onDragLeave}
-            onClick={onClick}
-            role="button"
-            tabIndex={0}
-            aria-label="Upload architectural plan"
-        >
-            <input
-                ref={inputRef}
-                type="file"
-                accept={ACCEPTED}
-                onChange={onInputChange}
-                disabled={disabled}
-                style={{ display: "none" }}
-            />
+        <div className="upload-section-wrapper">
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+                id="upload-zone"
+                className={`upload-zone ${dragOver ? "drag-over" : ""}`}
+                onDrop={onDrop}
+                onDragOver={onDragOver}
+                onDragLeave={onDragLeave}
+                onClick={onClick}
+                role="button"
+                tabIndex={0}
+                aria-label="Upload architectural plan"
+            >
+                <input
+                    ref={inputRef}
+                    type="file"
+                    accept={ACCEPTED}
+                    onChange={onInputChange}
+                    disabled={disabled}
+                    style={{ display: "none" }}
+                />
 
-            <div className="upload-icon">📐</div>
-            <h3>Drop your architectural plan here</h3>
-            <p>PDF, PNG, or JPG — max 20 MB</p>
+                <div className="upload-icon">📐</div>
+                <h3>Drop your architectural plan here</h3>
+                <p>PDF, PNG, or JPG — max 20 MB</p>
 
-            {selectedFile && (
-                <div className="file-selected">
-                    <span>📄</span>
-                    <span className="file-name">{selectedFile.name}</span>
-                    <span className="file-size">{formatSize(selectedFile.size)}</span>
-                </div>
-            )}
+                {selectedFile && (
+                    <div className="file-selected">
+                        <span>📄</span>
+                        <span className="file-name">{selectedFile.name}</span>
+                        <span className="file-size">{formatSize(selectedFile.size)}</span>
+                    </div>
+                )}
+            </motion.div>
 
-            <div
+            <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.1, ease: "easeOut" }}
                 className="config-panel"
-                onClick={(e) => e.stopPropagation()}
-                onDrop={(e) => { e.preventDefault(); e.stopPropagation(); }}
-                onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); }}
             >
                 <div className="config-group">
                     <label className="config-label">House Type</label>
@@ -137,7 +139,7 @@ export default function UploadZone({
                         </label>
                     </div>
                 </div>
-            </div>
-        </motion.div>
+            </motion.div>
+        </div>
     );
 }
