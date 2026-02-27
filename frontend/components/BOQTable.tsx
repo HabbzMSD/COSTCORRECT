@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { motion } from "framer-motion";
 
 interface MaterialLine {
     item: string;
@@ -56,7 +57,13 @@ function getIcon(item: string): string {
 
 export default function BOQTable({ data, onReset }: BOQTableProps) {
     return (
-        <div className="boq-results" id="boq-results">
+        <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
+            className="boq-results"
+            id="boq-results"
+        >
             <h2 className="section-title">Bill of Quantities</h2>
             <p className="section-subtitle">
                 Generated from <strong>{data.filename}</strong>
@@ -111,7 +118,12 @@ export default function BOQTable({ data, onReset }: BOQTableProps) {
                 </thead>
                 <tbody>
                     {data.materials.map((m, i) => (
-                        <tr key={i}>
+                        <motion.tr
+                            key={i}
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ duration: 0.3, delay: i * 0.1 }}
+                        >
                             <td>
                                 <span className="item-icon">{getIcon(m.item)}</span>
                                 {m.item}
@@ -124,7 +136,7 @@ export default function BOQTable({ data, onReset }: BOQTableProps) {
                                     {m.estimated_cost !== undefined ? fmtCurrency(m.estimated_cost) : "N/A"}
                                 </td>
                             )}
-                        </tr>
+                        </motion.tr>
                     ))}
                 </tbody>
             </table>
@@ -139,6 +151,6 @@ export default function BOQTable({ data, onReset }: BOQTableProps) {
             <button className="btn-reset" onClick={onReset} id="reset-button">
                 ← Upload another plan
             </button>
-        </div>
+        </motion.div>
     );
 }

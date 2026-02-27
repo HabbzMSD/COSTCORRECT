@@ -72,3 +72,12 @@ The frontend will be running at `http://localhost:3000`.
 3. Commit your changes (`git commit -m 'Add some amazing feature'`)
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
+
+## 🚀 Live Deployment on Vercel
+
+If deploying the Frontend via [Vercel](https://vercel.com/):
+1. Import your GitHub repository to Vercel.
+2. In the Vercel dashboard, make sure the **Framework Preset** is set to `Next.js`.
+3. Set the **Root Directory** to `frontend`.
+4. Ensure the backend URL is either deployed elsewhere (e.g. Render, Railway, AWS) or proxied correctly if sharing the same root.
+5. Deploy and enjoy the smooth `framer-motion` integrated experiences!

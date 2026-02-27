@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useCallback, useRef, useState, DragEvent } from "react";
+import { motion } from "framer-motion";
 
 interface UploadZoneProps {
     onFileSelected: (file: File) => void;
@@ -64,7 +65,10 @@ export default function UploadZone({
     };
 
     return (
-        <div
+        <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
             id="upload-zone"
             className={`upload-zone ${dragOver ? "drag-over" : ""}`}
             onDrop={onDrop}
@@ -134,6 +138,6 @@ export default function UploadZone({
                     </div>
                 </div>
             </div>
-        </div>
+        </motion.div>
     );
 }

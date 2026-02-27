@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import UploadZone from "@/components/UploadZone";
 import BOQTable, { BOQData } from "@/components/BOQTable";
 
@@ -90,62 +91,95 @@ export default function HomePage() {
             </button>
 
             {/* ── Header ───────────────────────────────────────────────────── */}
-            <header className="app-header">
+            <motion.header
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+                className="app-header"
+            >
                 <h1>CostCorrect</h1>
                 <p>
                     Upload your architectural plan and get a South African Bill of
                     Quantities — bricks, cement, and sand — in seconds.
                 </p>
-            </header>
+            </motion.header>
 
             {/* ── Main Card ────────────────────────────────────────────────── */}
             <main className="main-content">
-                <div className="glass-card">
-                    {/* IDLE or ERROR → show upload zone */}
-                    {(state === "idle" || state === "error") && (
-                        <>
-                            <UploadZone
-                                onFileSelected={handleFileSelected}
-                                floors={floors}
-                                setFloors={setFloors}
-                                estimatePrices={estimatePrices}
-                                setEstimatePrices={setEstimatePrices}
-                                disabled={false}
-                            />
-
-                            {error && (
-                                <div className="error-banner" id="error-banner">
-                                    {error}
-                                </div>
-                            )}
-
-                            <button
-                                className="btn-primary"
-                                onClick={handleUpload}
-                                disabled={!file}
-                                id="analyse-button"
+                <motion.div
+                    layout
+                    transition={{ duration: 0.4, ease: "easeInOut" }}
+                    className="glass-card"
+                >
+                    <AnimatePresence mode="wait">
+                        {/* IDLE or ERROR → show upload zone */}
+                        {(state === "idle" || state === "error") && (
+                            <motion.div
+                                key="upload-view"
+                                initial={{ opacity: 0, scale: 0.95 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.95 }}
+                                transition={{ duration: 0.3 }}
                             >
-                                🔍 Analyse Plan
-                            </button>
-                        </>
-                    )}
+                                <UploadZone
+                                    onFileSelected={handleFileSelected}
+                                    floors={floors}
+                                    setFloors={setFloors}
+                                    estimatePrices={estimatePrices}
+                                    setEstimatePrices={setEstimatePrices}
+                                    disabled={false}
+                                />
 
-                    {/* UPLOADING → loading spinner */}
-                    {state === "uploading" && (
-                        <div className="loading-overlay" id="loading-overlay">
-                            <div className="spinner" />
-                            <div className="loading-text">
-                                <strong>Analysing your plan with Gemini AI…</strong>
-                                Detecting walls, measuring lengths, and calculating materials.
-                            </div>
-                        </div>
-                    )}
+                                {error && (
+                                    <div className="error-banner" id="error-banner">
+                                        {error}
+                                    </div>
+                                )}
 
-                    {/* DONE → BOQ table */}
-                    {state === "done" && boq && (
-                        <BOQTable data={boq} onReset={handleReset} />
-                    )}
-                </div>
+                                <motion.button
+                                    whileHover={{ scale: 1.02 }}
+                                    whileTap={{ scale: 0.98 }}
+                                    className="btn-primary"
+                                    onClick={handleUpload}
+                                    disabled={!file}
+                                    id="analyse-button"
+                                >
+                                    🔍 Analyse Plan
+                                </motion.button>
+                            </motion.div>
+                        )}
+
+                        {/* UPLOADING → loading spinner */}
+                        {state === "uploading" && (
+                            <motion.div
+                                key="loading-view"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                className="loading-overlay"
+                                id="loading-overlay"
+                            >
+                                <div className="spinner" />
+                                <div className="loading-text">
+                                    <strong>Analysing your plan with Gemini AI…</strong>
+                                    Detecting walls, measuring lengths, and calculating materials.
+                                </div>
+                            </motion.div>
+                        )}
+
+                        {/* DONE → BOQ table */}
+                        {state === "done" && boq && (
+                            <motion.div
+                                key="boq-view"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                            >
+                                <BOQTable data={boq} onReset={handleReset} />
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+                </motion.div>
             </main>
         </div>
     );
