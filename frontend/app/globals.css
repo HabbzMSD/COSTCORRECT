@@ -394,11 +394,18 @@ input:checked+.slider:before {
   transform: translateX(20px);
 }
 
-/* ── Theme Toggle Button ────────────────────────────────────────────────── */
-.theme-toggle {
+/* ── Theme Toggle & Auth Buttons ────────────────────────────────────────── */
+.top-nav-controls {
   position: fixed;
   top: 1.5rem;
   right: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  z-index: 100;
+}
+
+.theme-toggle {
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
   color: var(--text-primary);
@@ -411,13 +418,39 @@ input:checked+.slider:before {
   cursor: pointer;
   box-shadow: var(--shadow-sm);
   transition: all var(--transition-fast);
-  z-index: 100;
 }
 
 .theme-toggle:hover {
   transform: scale(1.05);
   border-color: var(--accent);
   color: var(--accent);
+}
+
+.auth-buttons {
+  display: flex;
+  align-items: center;
+}
+
+.btn-signin {
+  padding: 0.5rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  font-family: inherit;
+  color: var(--text-primary);
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 24px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  box-shadow: var(--shadow-sm);
+  backdrop-filter: blur(8px);
+}
+
+.btn-signin:hover {
+  background: rgba(230, 57, 70, 0.05);
+  border-color: var(--accent);
+  color: var(--accent);
+  transform: translateY(-1px);
 }
 
 /* ── Loading ────────────────────────────────────────────────────────────── */

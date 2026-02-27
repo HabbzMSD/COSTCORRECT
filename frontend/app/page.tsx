@@ -2,6 +2,7 @@
 
 import React, { useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 import UploadZone from "@/components/UploadZone";
 import BOQTable, { BOQData } from "@/components/BOQTable";
 
@@ -82,13 +83,25 @@ export default function HomePage() {
 
     return (
         <div className="app-container">
-            <button
-                className="theme-toggle"
-                onClick={toggleTheme}
-                aria-label="Toggle theme"
-            >
-                {theme === "light" ? "🌙" : "☀️"}
-            </button>
+            <div className="top-nav-controls">
+                <button
+                    className="theme-toggle top-nav-item"
+                    onClick={toggleTheme}
+                    aria-label="Toggle theme"
+                >
+                    {theme === "light" ? "🌙" : "☀️"}
+                </button>
+                <div className="top-nav-item auth-buttons">
+                    <SignedIn>
+                        <UserButton afterSignOutUrl="/" />
+                    </SignedIn>
+                    <SignedOut>
+                        <SignInButton mode="modal">
+                            <button className="btn-signin">Sign In</button>
+                        </SignInButton>
+                    </SignedOut>
+                </div>
+            </div>
 
             {/* ── Header ───────────────────────────────────────────────────── */}
             <motion.header
