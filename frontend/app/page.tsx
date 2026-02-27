@@ -161,7 +161,7 @@ export default function HomePage() {
                             >
                                 <div className="spinner" />
                                 <div className="loading-text">
-                                    <strong>Analysing your plan with Gemini AI…</strong>
+                                    <strong>Please wait while we carefully analyze your plan...</strong>
                                     Detecting walls, measuring lengths, and calculating materials.
                                 </div>
                             </motion.div>
