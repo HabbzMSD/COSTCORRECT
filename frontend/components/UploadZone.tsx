@@ -4,6 +4,10 @@ import React, { useCallback, useRef, useState, DragEvent } from "react";
 
 interface UploadZoneProps {
     onFileSelected: (file: File) => void;
+    floors: number;
+    setFloors: (val: number) => void;
+    estimatePrices: boolean;
+    setEstimatePrices: (val: boolean) => void;
     disabled?: boolean;
 }
 
@@ -15,7 +19,14 @@ function formatSize(bytes: number): string {
     return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
-export default function UploadZone({ onFileSelected, disabled }: UploadZoneProps) {
+export default function UploadZone({
+    onFileSelected,
+    floors,
+    setFloors,
+    estimatePrices,
+    setEstimatePrices,
+    disabled
+}: UploadZoneProps) {
     const inputRef = useRef<HTMLInputElement>(null);
     const [dragOver, setDragOver] = useState(false);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -84,6 +95,45 @@ export default function UploadZone({ onFileSelected, disabled }: UploadZoneProps
                     <span className="file-size">{formatSize(selectedFile.size)}</span>
                 </div>
             )}
+
+            <div
+                className="config-panel"
+                onClick={(e) => e.stopPropagation()}
+                onDrop={(e) => { e.preventDefault(); e.stopPropagation(); }}
+                onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); }}
+            >
+                <div className="config-group">
+                    <label className="config-label">House Type</label>
+                    <select
+                        className="config-select"
+                        value={floors}
+                        onChange={(e) => setFloors(Number(e.target.value))}
+                        disabled={disabled}
+                    >
+                        <option value={1}>1 Floor (Single Storey)</option>
+                        <option value={2}>2 Floors (Double Storey)</option>
+                        <option value={3}>3 Floors</option>
+                        <option value={4}>4 Floors</option>
+                    </select>
+                </div>
+
+                <div className="config-group">
+                    <div className="toggle-switch-wrapper">
+                        <label className="config-label" style={{ marginBottom: 0 }}>
+                            Generate results with price estimations
+                        </label>
+                        <label className="toggle-switch">
+                            <input
+                                type="checkbox"
+                                checked={estimatePrices}
+                                onChange={(e) => setEstimatePrices(e.target.checked)}
+                                disabled={disabled}
+                            />
+                            <span className="slider"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 }

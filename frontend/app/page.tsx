@@ -9,8 +9,31 @@ type AppState = "idle" | "uploading" | "done" | "error";
 export default function HomePage() {
     const [state, setState] = useState<AppState>("idle");
     const [file, setFile] = useState<File | null>(null);
+    const [floors, setFloors] = useState<number>(1);
+    const [estimatePrices, setEstimatePrices] = useState<boolean>(false);
     const [boq, setBOQ] = useState<BOQData | null>(null);
     const [error, setError] = useState<string>("");
+    const [theme, setTheme] = useState<"light" | "dark">("light");
+
+    React.useEffect(() => {
+        const stored = localStorage.getItem("theme");
+        if (stored === "dark" || (!stored && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+            setTheme("dark");
+        }
+    }, []);
+
+    const toggleTheme = useCallback(() => {
+        setTheme((prev) => {
+            const next = prev === "light" ? "dark" : "light";
+            if (next === "dark") {
+                document.documentElement.setAttribute("data-theme", "dark");
+            } else {
+                document.documentElement.removeAttribute("data-theme");
+            }
+            localStorage.setItem("theme", next);
+            return next;
+        });
+    }, []);
 
     const handleFileSelected = useCallback((f: File) => {
         setFile(f);
@@ -26,6 +49,8 @@ export default function HomePage() {
         try {
             const formData = new FormData();
             formData.append("file", file);
+            formData.append("floors", floors.toString());
+            formData.append("estimate_prices", estimatePrices.toString());
 
             const res = await fetch("/api/upload", {
                 method: "POST",
@@ -56,6 +81,14 @@ export default function HomePage() {
 
     return (
         <div className="app-container">
+            <button
+                className="theme-toggle"
+                onClick={toggleTheme}
+                aria-label="Toggle theme"
+            >
+                {theme === "light" ? "🌙" : "☀️"}
+            </button>
+
             {/* ── Header ───────────────────────────────────────────────────── */}
             <header className="app-header">
                 <h1>CostCorrect</h1>
@@ -73,6 +106,10 @@ export default function HomePage() {
                         <>
                             <UploadZone
                                 onFileSelected={handleFileSelected}
+                                floors={floors}
+                                setFloors={setFloors}
+                                estimatePrices={estimatePrices}
+                                setEstimatePrices={setEstimatePrices}
                                 disabled={false}
                             />
 

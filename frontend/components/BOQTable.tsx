@@ -6,6 +6,7 @@ interface MaterialLine {
     item: string;
     quantity: number;
     unit: string;
+    estimated_cost?: number;
 }
 
 export interface BOQData {
@@ -23,6 +24,7 @@ export interface BOQData {
     sand_cubes: number;
     wastage_percent: number;
     materials: MaterialLine[];
+    total_estimated_cost?: number;
     confidence_note?: string | null;
 }
 
@@ -33,6 +35,10 @@ interface BOQTableProps {
 
 function fmtNum(n: number): string {
     return n.toLocaleString("en-ZA", { maximumFractionDigits: 2 });
+}
+
+function fmtCurrency(amount: number): string {
+    return new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(amount);
 }
 
 const ICONS: Record<string, string> = {
@@ -82,6 +88,14 @@ export default function BOQTable({ data, onReset }: BOQTableProps) {
                     <span className="meta-label">Wastage</span>
                     <span className="meta-value">{data.wastage_percent}%</span>
                 </div>
+                {data.total_estimated_cost !== undefined && data.total_estimated_cost !== null && (
+                    <div className="meta-chip">
+                        <span className="meta-label">Total Est. Cost</span>
+                        <span className="meta-value" style={{ color: "var(--success)" }}>
+                            {fmtCurrency(data.total_estimated_cost)}
+                        </span>
+                    </div>
+                )}
             </div>
 
             {/* ── Materials table ─────────────────────────────────────────── */}
@@ -90,6 +104,9 @@ export default function BOQTable({ data, onReset }: BOQTableProps) {
                     <tr>
                         <th>Material</th>
                         <th style={{ textAlign: "right" }}>Quantity</th>
+                        {data.total_estimated_cost !== undefined && (
+                            <th style={{ textAlign: "right" }}>Est. Cost</th>
+                        )}
                     </tr>
                 </thead>
                 <tbody>
@@ -102,6 +119,11 @@ export default function BOQTable({ data, onReset }: BOQTableProps) {
                             <td>
                                 {fmtNum(m.quantity)} <span style={{ color: "var(--text-muted)" }}>{m.unit}</span>
                             </td>
+                            {data.total_estimated_cost !== undefined && (
+                                <td style={{ color: m.estimated_cost !== undefined ? "var(--text-primary)" : "var(--text-muted)" }}>
+                                    {m.estimated_cost !== undefined ? fmtCurrency(m.estimated_cost) : "N/A"}
+                                </td>
+                            )}
                         </tr>
                     ))}
                 </tbody>

@@ -19,6 +19,7 @@ class MaterialLine(BaseModel):
     item: str
     quantity: float
     unit: str
+    estimated_cost: Optional[float] = Field(None, description="Estimated cost in Rand (R) if requested")
 
 
 class BOQResponse(BaseModel):
@@ -42,5 +43,7 @@ class BOQResponse(BaseModel):
     wastage_percent: float
 
     materials: list[MaterialLine]
+
+    total_estimated_cost: Optional[float] = Field(None, description="Sum of all estimated material costs")
 
     confidence_note: Optional[str] = None

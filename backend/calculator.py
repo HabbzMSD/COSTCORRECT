@@ -18,6 +18,9 @@ from config import (
     DEFAULT_WALL_HEIGHT_M,
     CEMENT_BAGS_PER_1000_BRICKS,
     SAND_CUBES_PER_1000_BRICKS,
+    PRICE_BRICK,
+    PRICE_CEMENT_BAG,
+    PRICE_SAND_CUBE,
 )
 
 
@@ -27,6 +30,8 @@ def calculate_boq(
     walls_230mm_linear_m: float,
     walls_110mm_linear_m: float,
     wall_height_m: float = DEFAULT_WALL_HEIGHT_M,
+    floors: int = 1,
+    estimate_prices: bool = False,
     confidence_note: str | None = None,
 ) -> BOQResponse:
     """
@@ -40,8 +45,8 @@ def calculate_boq(
     """
 
     # ── Wall areas ──────────────────────────────────────────────────────────
-    area_230 = walls_230mm_linear_m * wall_height_m
-    area_110 = walls_110mm_linear_m * wall_height_m
+    area_230 = walls_230mm_linear_m * wall_height_m * floors
+    area_110 = walls_110mm_linear_m * wall_height_m * floors
 
     # ── Brick counts (before wastage) ───────────────────────────────────────
     bricks_230_raw = area_230 * BRICKS_PER_SQM_DOUBLE
@@ -62,11 +67,15 @@ def calculate_boq(
 
     # ── Assemble materials table ────────────────────────────────────────────
     materials: list[MaterialLine] = [
-        MaterialLine(item="Bricks — 230 mm double skin", quantity=bricks_230, unit="bricks"),
-        MaterialLine(item="Bricks — 110 mm single skin", quantity=bricks_110, unit="bricks"),
-        MaterialLine(item="Cement (50 kg bags)", quantity=cement_bags, unit="bags"),
-        MaterialLine(item="Building sand", quantity=sand_cubes, unit="m³"),
+        MaterialLine(item="Bricks — 230 mm double skin", quantity=bricks_230, unit="bricks", estimated_cost=bricks_230 * PRICE_BRICK if estimate_prices else None),
+        MaterialLine(item="Bricks — 110 mm single skin", quantity=bricks_110, unit="bricks", estimated_cost=bricks_110 * PRICE_BRICK if estimate_prices else None),
+        MaterialLine(item="Cement (50 kg bags)", quantity=cement_bags, unit="bags", estimated_cost=cement_bags * PRICE_CEMENT_BAG if estimate_prices else None),
+        MaterialLine(item="Building sand", quantity=sand_cubes, unit="m³", estimated_cost=sand_cubes * PRICE_SAND_CUBE if estimate_prices else None),
     ]
+
+    total_cost = None
+    if estimate_prices:
+        total_cost = sum(m.estimated_cost for m in materials if m.estimated_cost is not None)
 
     return BOQResponse(
         filename=filename,
@@ -83,5 +92,6 @@ def calculate_boq(
         sand_cubes=sand_cubes,
         wastage_percent=WASTAGE_FACTOR * 100,
         materials=materials,
+        total_estimated_cost=total_cost,
         confidence_note=confidence_note,
     )

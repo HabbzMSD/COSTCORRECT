@@ -14,6 +14,24 @@ export default function RootLayout({
 }) {
     return (
         <html lang="en">
+            <head>
+                <script
+                    dangerouslySetInnerHTML={{
+                        __html: `
+                        (function() {
+                            try {
+                                var currentTheme = localStorage.getItem("theme");
+                                if (currentTheme === "dark" || (!currentTheme && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+                                    document.documentElement.setAttribute("data-theme", "dark");
+                                } else {
+                                    document.documentElement.removeAttribute("data-theme");
+                                }
+                            } catch (e) {}
+                        })();
+                        `,
+                    }}
+                />
+            </head>
             <body>{children}</body>
         </html>
     );

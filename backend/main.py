@@ -3,7 +3,7 @@ CostCorrect FastAPI application.
 Upload an architectural plan → Gemini Vision → SA BOQ.
 """
 
-from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi import FastAPI, UploadFile, File, Form, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
 from storage import get_storage
@@ -35,7 +35,11 @@ async def health():
 
 
 @app.post("/api/upload", response_model=BOQResponse)
-async def upload_plan(file: UploadFile = File(...)):
+async def upload_plan(
+    file: UploadFile = File(...),
+    floors: int = Form(1),
+    estimate_prices: bool = Form(False),
+):
     """
     Accept an architectural plan (PDF/PNG/JPG), analyse it with
     Gemini Vision, and return a Bill of Quantities.
@@ -68,6 +72,8 @@ async def upload_plan(file: UploadFile = File(...)):
         scale=measurement.scale,
         walls_230mm_linear_m=measurement.walls_230mm_linear_m,
         walls_110mm_linear_m=measurement.walls_110mm_linear_m,
+        floors=floors,
+        estimate_prices=estimate_prices,
         confidence_note=measurement.confidence_note,
     )
 

@@ -37,3 +37,8 @@ DEFAULT_WALL_HEIGHT_M: float = 2.7  # standard SA residential wall height
 # 1:4 mix  →  roughly 1 bag (50 kg) of cement per ~1.2 m² of single-skin wall
 CEMENT_BAGS_PER_1000_BRICKS: float = 7.0   # ~7 bags per 1 000 bricks
 SAND_CUBES_PER_1000_BRICKS: float = 0.5    # 0.5 m³ per 1 000 bricks
+
+# ── Placeholder Pricing (ZAR) ───────────────────────────────────────────────
+PRICE_BRICK: float = 4.00
+PRICE_CEMENT_BAG: float = 120.00
+PRICE_SAND_CUBE: float = 400.00
