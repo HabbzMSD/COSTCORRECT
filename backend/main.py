@@ -3,7 +3,7 @@ CostCorrect FastAPI application.
 Upload an architectural plan → Gemini Vision → SA BOQ.
 """
 
-from fastapi import FastAPI, UploadFile, File, Form, HTTPException
+from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Request, Header
 from fastapi.middleware.cors import CORSMiddleware
 
 from storage import get_storage
@@ -83,6 +83,68 @@ async def upload_plan(
     )
 
     return boq
+
+
+@app.post("/api/webhooks/clerk")
+async def clerk_webhook(
+    request: Request,
+    svix_id: str = Header(default=None),
+    svix_timestamp: str = Header(default=None),
+    svix_signature: str = Header(default=None),
+):
+    import os
+    from svix.webhooks import Webhook, WebhookVerificationError
+    from supabase import create_client, Client
+
+    # 1. Get webhook secret from environment
+    webhook_secret = os.environ.get("CLERK_WEBHOOK_SECRET")
+    if not webhook_secret:
+        raise HTTPException(status_code=500, detail="Missing CLERK_WEBHOOK_SECRET")
+
+    # 2. Get the raw body
+    payload = await request.body()
+    headers = {
+        "svix-id": svix_id,
+        "svix-timestamp": svix_timestamp,
+        "svix-signature": svix_signature,
+    }
+
+    # 3. Verify the webhook signature
+    try:
+        wh = Webhook(webhook_secret)
+        evt = wh.verify(payload, headers)
+    except WebhookVerificationError as e:
+        raise HTTPException(status_code=400, detail="Invalid signature")
+
+    # 4. Handle the event
+    event_type = evt.get("type")
+    
+    if event_type == "user.created":
+        data = evt.get("data", {})
+        user_id = data.get("id")
+        email_addresses = data.get("email_addresses", [])
+        primary_email = email_addresses[0].get("email_address") if email_addresses else None
+        
+        if user_id and primary_email:
+            # Insert into Supabase
+            supabase_url = os.environ.get("SUPABASE_URL")
+            supabase_key = os.environ.get("SUPABASE_KEY")
+            
+            if not supabase_url or not supabase_key:
+                print("Warning: Missing Supabase credentials. Cannot save user.")
+            else:
+                supabase: Client = create_client(supabase_url, supabase_key)
+                try:
+                    supabase.table("profiles").insert({
+                        "id": user_id,
+                        "email": primary_email,
+                        "tier": "free"
+                    }).execute()
+                    print(f"Successfully synced user {primary_email} to Supabase")
+                except Exception as e:
+                    print(f"Failed to insert user to Supabase: {e}")
+
+    return {"success": True}
 
 
 if __name__ == "__main__":
