@@ -3,13 +3,14 @@ CostCorrect FastAPI application.
 Upload an architectural plan → Gemini Vision → SA BOQ.
 """
 
-from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Request, Header
+from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Request, Header, Depends
 from fastapi.middleware.cors import CORSMiddleware
 
 from storage import get_storage
 from vision import analyse_plan
 from calculator import calculate_boq
 from schemas import BOQResponse
+from auth import get_current_user_tier
 
 app = FastAPI(
     title="CostCorrect API",
@@ -39,16 +40,28 @@ async def health():
     return {"status": "ok"}
 
 
+@app.get("/api/me")
+async def get_me(tier: str = Depends(get_current_user_tier)):
+    return {"tier": tier}
+
+
 @app.post("/api/upload", response_model=BOQResponse)
 async def upload_plan(
     file: UploadFile = File(...),
     floors: int = Form(1),
     estimate_prices: bool = Form(False),
+    tier: str = Depends(get_current_user_tier),
 ):
     """
     Accept an architectural plan (PDF/PNG/JPG), analyse it with
     Gemini Vision, and return a Bill of Quantities.
     """
+    if (floors > 1 or estimate_prices) and tier == "free":
+        raise HTTPException(
+            status_code=402,
+            detail="Payment Required: Multi-floor analysis and cost estimation are Pro features. Please upgrade your account."
+        )
+
     # ── Validate file type ──────────────────────────────────────────────────
     filename = file.filename or "upload"
     ext = "." + filename.rsplit(".", 1)[-1].lower() if "." in filename else ""
