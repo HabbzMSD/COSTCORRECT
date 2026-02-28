@@ -10,6 +10,7 @@ interface UploadZoneProps {
     estimatePrices: boolean;
     setEstimatePrices: (val: boolean) => void;
     disabled?: boolean;
+    tier: string;
 }
 
 const ACCEPTED = ".pdf,.png,.jpg,.jpeg";
@@ -26,7 +27,8 @@ export default function UploadZone({
     setFloors,
     estimatePrices,
     setEstimatePrices,
-    disabled
+    disabled,
+    tier
 }: UploadZoneProps) {
     const inputRef = useRef<HTMLInputElement>(null);
     const [dragOver, setDragOver] = useState(false);
@@ -109,12 +111,14 @@ export default function UploadZone({
                 className="config-panel"
             >
                 <div className="config-group">
-                    <label className="config-label">House Type</label>
+                    <label className="config-label">
+                        House Type {tier === "free" && <span className="pro-badge">PRO</span>}
+                    </label>
                     <select
                         className="config-select"
                         value={floors}
                         onChange={(e) => setFloors(Number(e.target.value))}
-                        disabled={disabled}
+                        disabled={disabled || tier === "free"}
                     >
                         <option value={1}>1 Floor (Single Storey)</option>
                         <option value={2}>2 Floors (Double Storey)</option>
@@ -126,14 +130,14 @@ export default function UploadZone({
                 <div className="config-group">
                     <div className="toggle-switch-wrapper">
                         <label className="config-label" style={{ marginBottom: 0 }}>
-                            Generate results with price estimations
+                            Generate results with price estimations {tier === "free" && <span className="pro-badge">PRO</span>}
                         </label>
                         <label className="toggle-switch">
                             <input
                                 type="checkbox"
                                 checked={estimatePrices}
                                 onChange={(e) => setEstimatePrices(e.target.checked)}
-                                disabled={disabled}
+                                disabled={disabled || tier === "free"}
                             />
                             <span className="slider"></span>
                         </label>

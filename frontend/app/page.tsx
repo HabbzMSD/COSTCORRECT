@@ -1,14 +1,15 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
+import { SignedIn, SignedOut, SignInButton, UserButton, useAuth } from "@clerk/nextjs";
 import UploadZone from "@/components/UploadZone";
 import BOQTable, { BOQData } from "@/components/BOQTable";
 
 type AppState = "idle" | "uploading" | "done" | "error";
 
 export default function HomePage() {
+    const { getToken, isSignedIn } = useAuth();
     const [state, setState] = useState<AppState>("idle");
     const [file, setFile] = useState<File | null>(null);
     const [floors, setFloors] = useState<number>(1);
@@ -16,13 +17,36 @@ export default function HomePage() {
     const [boq, setBOQ] = useState<BOQData | null>(null);
     const [error, setError] = useState<string>("");
     const [theme, setTheme] = useState<"light" | "dark">("light");
+    const [tier, setTier] = useState<string>("free");
 
-    React.useEffect(() => {
+    useEffect(() => {
         const stored = localStorage.getItem("theme");
         if (stored === "dark" || (!stored && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
             setTheme("dark");
         }
     }, []);
+
+    useEffect(() => {
+        const fetchTier = async () => {
+            if (isSignedIn) {
+                try {
+                    const token = await getToken();
+                    const res = await fetch("/api/me", {
+                        headers: { Authorization: `Bearer ${token}` }
+                    });
+                    if (res.ok) {
+                        const data = await res.json();
+                        setTier(data.tier || "free");
+                    }
+                } catch (e) {
+                    console.error("Failed to fetch tier", e);
+                }
+            } else {
+                setTier("free");
+            }
+        };
+        fetchTier();
+    }, [isSignedIn, getToken]);
 
     const toggleTheme = useCallback(() => {
         setTheme((prev) => {
@@ -54,8 +78,17 @@ export default function HomePage() {
             formData.append("floors", floors.toString());
             formData.append("estimate_prices", estimatePrices.toString());
 
+            const headers: Record<string, string> = {};
+            if (isSignedIn) {
+                const token = await getToken();
+                if (token) {
+                    headers["Authorization"] = `Bearer ${token}`;
+                }
+            }
+
             const res = await fetch("/api/upload", {
                 method: "POST",
+                headers,
                 body: formData,
             });
 
@@ -72,7 +105,7 @@ export default function HomePage() {
             setError(message);
             setState("error");
         }
-    }, [file]);
+    }, [file, floors, estimatePrices, isSignedIn, getToken]);
 
     const handleReset = useCallback(() => {
         setFile(null);
@@ -141,6 +174,7 @@ export default function HomePage() {
                                     estimatePrices={estimatePrices}
                                     setEstimatePrices={setEstimatePrices}
                                     disabled={false}
+                                    tier={tier}
                                 />
 
                                 {error && (
@@ -188,7 +222,7 @@ export default function HomePage() {
                                 animate={{ opacity: 1 }}
                                 exit={{ opacity: 0 }}
                             >
-                                <BOQTable data={boq} onReset={handleReset} />
+                                <BOQTable data={boq} onReset={handleReset} tier={tier} />
                             </motion.div>
                         )}
                     </AnimatePresence>

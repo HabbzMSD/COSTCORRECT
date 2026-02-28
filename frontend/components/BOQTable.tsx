@@ -33,6 +33,7 @@ export interface BOQData {
 interface BOQTableProps {
     data: BOQData;
     onReset: () => void;
+    tier?: string;
 }
 
 function fmtNum(n: number): string {
@@ -56,7 +57,7 @@ function getIcon(item: string): string {
     return "📦";
 }
 
-export default function BOQTable({ data, onReset }: BOQTableProps) {
+export default function BOQTable({ data, onReset, tier = "free" }: BOQTableProps) {
     const componentRef = useRef<HTMLDivElement>(null);
     const handlePrint = useReactToPrint({
         contentRef: componentRef,
@@ -161,9 +162,20 @@ export default function BOQTable({ data, onReset }: BOQTableProps) {
                 <button className="btn-reset" onClick={onReset} id="reset-button">
                     ← Upload another plan
                 </button>
-                <button className="btn-success" onClick={() => handlePrint()} id="download-pdf-button">
-                    📄 Download PDF
-                </button>
+                {tier === "free" ? (
+                    <button
+                        className="btn-success"
+                        style={{ opacity: 0.6, cursor: "not-allowed" }}
+                        onClick={() => alert("PDF Export is a Pro feature! Please upgrade your account.")}
+                        id="download-pdf-button"
+                    >
+                        📄 Download PDF <span className="pro-badge">PRO</span>
+                    </button>
+                ) : (
+                    <button className="btn-success" onClick={() => handlePrint()} id="download-pdf-button">
+                        📄 Download PDF
+                    </button>
+                )}
             </div>
         </motion.div >
     );
