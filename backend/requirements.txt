@@ -10,3 +10,8 @@ pytest
 httpx
 supabase
 svix
+stripe
+PyJWT[crypto]
+reportlab
+pandas
+openpyxl
